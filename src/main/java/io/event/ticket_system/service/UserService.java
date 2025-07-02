@@ -73,7 +73,7 @@ public class UserService {
         Booking userBooking = bookingRepository.findFirstByUser(user);
         if (userBooking != null) {
             referencedWarning.setKey("user.booking.user.referenced");
-            referencedWarning.addParam(userBooking.getBookingId());
+            referencedWarning.addParam(userBooking.getId());
             return referencedWarning;
         }
         return null;

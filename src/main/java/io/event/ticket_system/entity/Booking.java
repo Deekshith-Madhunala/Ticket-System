@@ -1,5 +1,7 @@
 package io.event.ticket_system.entity;
 
+import io.event.ticket_system.util.BookingStatus;
+import io.event.ticket_system.util.PaymentStatus;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -24,9 +26,7 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 @Setter
 public class Booking {
 
-    private UUID id;
-
-    private Integer bookingId;
+    private String id;
 
     @NotNull
     @Digits(integer = 10, fraction = 2)
@@ -37,11 +37,9 @@ public class Booking {
 
     private Integer numberOfTickets;
 
-    @Size(max = 255)
-    private String bookingStatus;
+    private BookingStatus bookingStatus;
 
-    @Size(max = 255)
-    private String paymentStatus;
+    private PaymentStatus paymentStatus;
 
     private LocalDate bookingDate;
 

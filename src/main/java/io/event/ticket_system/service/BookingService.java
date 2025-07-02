@@ -1,109 +1,75 @@
-//package io.event.ticket_system.service;
-//
-//import io.event.ticket_system.entity.Booking;
-//import io.event.ticket_system.entity.Event;
-//import io.event.ticket_system.entity.Payment;
-//import io.event.ticket_system.entity.User;
-//import io.event.ticket_system.modelDTO.BookingDTO;
-//import io.event.ticket_system.repository.BookingRepository;
-//import io.event.ticket_system.repository.EventRepository;
-//import io.event.ticket_system.repository.PaymentRepository;
-//import io.event.ticket_system.repository.UserRepository;
-//import io.event.ticket_system.util.NotFoundException;
-//import io.event.ticket_system.util.ReferencedWarning;
-//import java.util.List;
-//import java.util.UUID;
-//import org.springframework.data.domain.Sort;
-//import org.springframework.stereotype.Service;
-//
-//
-//@Service
-//public class BookingService {
-//
-//    private final BookingRepository bookingRepository;
-//    private final UserRepository userRepository;
-//    private final EventRepository eventRepository;
-//    private final PaymentRepository paymentRepository;
-//
-//    public BookingService(final BookingRepository bookingRepository,
-//            final UserRepository userRepository, final EventRepository eventRepository,
-//            final PaymentRepository paymentRepository) {
-//        this.bookingRepository = bookingRepository;
-//        this.userRepository = userRepository;
-//        this.eventRepository = eventRepository;
-//        this.paymentRepository = paymentRepository;
-//    }
-//
-//    public List<BookingDTO> findAll() {
-//        final List<Booking> bookings = bookingRepository.findAll(Sort.by("bookingId"));
-//        return bookings.stream()
-//                .map(booking -> mapToDTO(booking, new BookingDTO()))
-//                .toList();
-//    }
-//
-//    public BookingDTO get(final UUID bookingId) {
-//        return bookingRepository.findById(bookingId)
-//                .map(booking -> mapToDTO(booking, new BookingDTO()))
-//                .orElseThrow(NotFoundException::new);
-//    }
-//
-//    public Integer create(final BookingDTO bookingDTO) {
-//        final Booking booking = new Booking();
-//        mapToEntity(bookingDTO, booking);
-//        return bookingRepository.save(booking).getBookingId();
-//    }
-//
-//    public void update(final UUID bookingId, final BookingDTO bookingDTO) {
-//        final Booking booking = bookingRepository.findById(bookingId)
-//                .orElseThrow(NotFoundException::new);
-//        mapToEntity(bookingDTO, booking);
-//        bookingRepository.save(booking);
-//    }
-//
-//    public void delete(final UUID bookingId) {
-//        bookingRepository.deleteById(bookingId);
-//    }
-//
-//    private BookingDTO mapToDTO(final Booking booking, final BookingDTO bookingDTO) {
-//        bookingDTO.setBookingId(booking.getBookingId());
-//        bookingDTO.setTotalAmount(booking.getTotalAmount());
-//        bookingDTO.setNumberOfTickets(booking.getNumberOfTickets());
-//        bookingDTO.setBookingStatus(booking.getBookingStatus());
-//        bookingDTO.setPaymentStatus(booking.getPaymentStatus());
-//        bookingDTO.setBookingDate(booking.getBookingDate());
-//        bookingDTO.setCancellationDeadline(booking.getCancellationDeadline());
-//        bookingDTO.setUser(booking.getUser() == null ? null : booking.getUser().getUserId());
-//        bookingDTO.setEvent(booking.getEvent() == null ? null : booking.getEvent().getEventId());
-//        return bookingDTO;
-//    }
-//
-//    private Booking mapToEntity(final BookingDTO bookingDTO, final Booking booking) {
-//        booking.setTotalAmount(bookingDTO.getTotalAmount());
-//        booking.setNumberOfTickets(bookingDTO.getNumberOfTickets());
-//        booking.setBookingStatus(bookingDTO.getBookingStatus());
-//        booking.setPaymentStatus(bookingDTO.getPaymentStatus());
-//        booking.setBookingDate(bookingDTO.getBookingDate());
-//        booking.setCancellationDeadline(bookingDTO.getCancellationDeadline());
-//        final User user = bookingDTO.getUser() == null ? null : userRepository.findById(bookingDTO.getUser())
-//                .orElseThrow(() -> new NotFoundException("user not found"));
-//        booking.setUser(user);
-//        final Event event = bookingDTO.getEvent() == null ? null : eventRepository.findById(bookingDTO.getEvent())
-//                .orElseThrow(() -> new NotFoundException("event not found"));
-//        booking.setEvent(event);
-//        return booking;
-//    }
-//
-//    public ReferencedWarning getReferencedWarning(final UUID bookingId) {
-//        final ReferencedWarning referencedWarning = new ReferencedWarning();
-//        final Booking booking = bookingRepository.findById(bookingId)
-//                .orElseThrow(NotFoundException::new);
-//        final Payment bookingPayment = paymentRepository.findFirstByBooking(booking);
-//        if (bookingPayment != null) {
-//            referencedWarning.setKey("booking.payment.booking.referenced");
-//            referencedWarning.addParam(bookingPayment.getPaymentId());
-//            return referencedWarning;
-//        }
-//        return null;
-//    }
-//
-//}
+package io.event.ticket_system.service;
+
+import io.event.ticket_system.entity.Booking;
+import io.event.ticket_system.entity.Event;
+import io.event.ticket_system.entity.User;
+import io.event.ticket_system.modelDTO.BookingDTO;
+import io.event.ticket_system.repository.BookingRepository;
+import io.event.ticket_system.repository.EventRepository;
+import io.event.ticket_system.repository.UserRepository;
+import io.event.ticket_system.util.NotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class BookingService {
+
+    private final BookingRepository bookingRepository;
+    private final UserRepository userRepository;
+    private final EventRepository eventRepository;
+    private final ModelMapper modelMapper;
+
+    public List<BookingDTO> findAll() {
+        return bookingRepository.findAll().stream()
+                .map(booking -> modelMapper.map(booking, BookingDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    public BookingDTO get(String bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Booking not found"));
+        return modelMapper.map(booking, BookingDTO.class);
+    }
+
+    public String create(BookingDTO bookingDTO) {
+        Booking booking = mapToEntity(bookingDTO);
+        return bookingRepository.save(booking).getId();
+    }
+
+    public void update(String bookingId, BookingDTO bookingDTO) {
+        Booking existingBooking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Booking not found"));
+        Booking updatedBooking = mapToEntity(bookingDTO);
+        updatedBooking.setId(existingBooking.getId()); // keep the original ID
+        bookingRepository.save(updatedBooking);
+    }
+
+    public void delete(String bookingId) {
+        bookingRepository.deleteById(bookingId);
+    }
+
+    private Booking mapToEntity(BookingDTO dto) {
+        Booking booking = modelMapper.map(dto, Booking.class);
+
+        // Set user reference
+        if (dto.getUserId() != null) {
+            User user = userRepository.findById(dto.getUserId())
+                    .orElseThrow(() -> new NotFoundException("User not found"));
+            booking.setUser(user);
+        }
+
+        // Set event reference
+        if (dto.getEventId() != null) {
+            Event event = eventRepository.findById(dto.getEventId())
+                    .orElseThrow(() -> new NotFoundException("Event not found"));
+            booking.setEvent(event);
+        }
+
+        return booking;
+    }
+}

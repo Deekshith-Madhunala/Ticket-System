@@ -7,10 +7,7 @@ import java.util.UUID;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 
-public interface BookingRepository extends MongoRepository<Booking, UUID> {
+public interface BookingRepository extends MongoRepository<Booking, String> {
 
     Booking findFirstByUser(User user);
-
-    Booking findFirstByEvent(Event event);
-
 }

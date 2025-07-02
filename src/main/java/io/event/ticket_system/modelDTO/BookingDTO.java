@@ -1,46 +1,37 @@
 package io.event.ticket_system.modelDTO;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
+import io.event.ticket_system.util.BookingStatus;
+import io.event.ticket_system.util.PaymentStatus;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
 public class BookingDTO {
 
-    private UUID id;
+    private String id;
 
-    private Integer bookingId;
-
-    @NotNull
-    @Digits(integer = 10, fraction = 2)
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    @Schema(type = "string", example = "52.08")
     private BigDecimal totalAmount;
 
     private Integer numberOfTickets;
 
-    @Size(max = 255)
-    private String bookingStatus;
+    private BookingStatus bookingStatus;
 
-    @Size(max = 255)
-    private String paymentStatus;
+    private PaymentStatus paymentStatus;
 
     private LocalDate bookingDate;
 
     private LocalDateTime cancellationDeadline;
 
-    private Integer user;
+    private String userId;  // Reference by user id
 
-    private Integer event;
+    private String eventId;  // Reference by event id
+
+    private Set<String> bookingPaymentIds; // IDs of associated payments if needed
 
 }

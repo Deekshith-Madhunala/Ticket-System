@@ -62,6 +62,7 @@ public class EventService {
         Venue venue = venueRepository.findById(dto.getVenueId())
                 .orElseThrow(() -> new NotFoundException("Venue not found"));
         event.setVenue(venue);
+
         return event;
     }
 }
