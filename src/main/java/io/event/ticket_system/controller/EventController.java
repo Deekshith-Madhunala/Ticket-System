@@ -1,69 +1,48 @@
-//package io.event.ticket_system.controller;
-//
-//import io.event.ticket_system.modelDTO.EventDTO;
-//import io.event.ticket_system.service.EventService;
-//import io.event.ticket_system.util.ReferencedException;
-//import io.event.ticket_system.util.ReferencedWarning;
-//import io.swagger.v3.oas.annotations.responses.ApiResponse;
-//import jakarta.validation.Valid;
-//import java.util.List;
-//import java.util.UUID;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.MediaType;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.DeleteMapping;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.PutMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//
-//@RestController
-//@RequestMapping(value = "/api/events", produces = MediaType.APPLICATION_JSON_VALUE)
-//public class EventController {
-//
-//    private final EventService eventService;
-//
-//    public EventController(final EventService eventService) {
-//        this.eventService = eventService;
-//    }
-//
-//    @GetMapping
-//    public ResponseEntity<List<EventDTO>> getAllEvents() {
-//        return ResponseEntity.ok(eventService.findAll());
-//    }
-//
-//    @GetMapping("/{eventId}")
-//    public ResponseEntity<EventDTO> getEvent(@PathVariable(name = "eventId") final UUID eventId) {
-//        return ResponseEntity.ok(eventService.get(eventId));
-//    }
-//
-//    @PostMapping
-//    @ApiResponse(responseCode = "201")
-//    public ResponseEntity<UUID> createEvent(@RequestBody @Valid final EventDTO eventDTO) {
-//        final UUID createdEventId = eventService.create(eventDTO);
-//        return new ResponseEntity<>(createdEventId, HttpStatus.CREATED);
-//    }
-//
-//    @PutMapping("/{eventId}")
-//    public ResponseEntity<UUID> updateEvent(@PathVariable(name = "eventId") final UUID eventId,
-//            @RequestBody @Valid final EventDTO eventDTO) {
-//        eventService.update(eventId, eventDTO);
-//        return ResponseEntity.ok(eventId);
-//    }
-//
-//    @DeleteMapping("/{eventId}")
-//    @ApiResponse(responseCode = "204")
-//    public ResponseEntity<Void> deleteEvent(@PathVariable(name = "eventId") final UUID eventId) {
-//        final ReferencedWarning referencedWarning = eventService.getReferencedWarning(eventId);
-//        if (referencedWarning != null) {
-//            throw new ReferencedException(referencedWarning);
-//        }
-//        eventService.delete(eventId);
-//        return ResponseEntity.noContent().build();
-//    }
-//
-//}
+package io.event.ticket_system.controller;
+
+import io.event.ticket_system.modelDTO.EventDTO;
+import io.event.ticket_system.service.EventService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/events")
+@RequiredArgsConstructor
+public class EventController {
+
+    private final EventService eventService;
+
+    @GetMapping
+    public ResponseEntity<List<EventDTO>> getAllEvents() {
+        return ResponseEntity.ok(eventService.findAll());
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventDTO> getEvent(@PathVariable String eventId) {
+        return ResponseEntity.ok(eventService.get(eventId));
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<String> createEvent(@RequestBody @Valid EventDTO eventDTO) {
+        String createdEventId = eventService.create(eventDTO);
+        return new ResponseEntity<>(createdEventId, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{eventId}")
+    public ResponseEntity<String> updateEvent(@PathVariable String eventId, @RequestBody @Valid EventDTO eventDTO) {
+        eventService.update(eventId, eventDTO);
+        return ResponseEntity.ok(eventId);
+    }
+
+    @DeleteMapping("/{eventId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteEvent(@PathVariable String eventId) {
+        eventService.delete(eventId);
+    }
+}

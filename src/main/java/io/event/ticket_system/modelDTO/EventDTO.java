@@ -1,46 +1,46 @@
 package io.event.ticket_system.modelDTO;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Digits;
+import io.event.ticket_system.util.EventCategory;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
 public class EventDTO {
 
-    private UUID id;
-
-    private Integer eventId;
+    private String id;
 
     @NotNull
-    @Size(max = 100)
-    private String title;
+    @Size(max = 150)
+    private String eventName;
 
-    private String description;
-
-    private LocalDateTime startDatetime;
-
-    private LocalDateTime endDatetime;
+    @Size(max = 1000)
+    private String eventDescription;
 
     @NotNull
-    @Digits(integer = 10, fraction = 2)
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    @Schema(type = "string", example = "75.08")
-    private BigDecimal price;
+    private EventCategory eventCategory;
 
-    @Size(max = 255)
-    private String imageUrl;
+    @NotNull
+    private Instant startDateTime;
 
-    private UUID eventType;
+    @NotNull
+    private Instant endDateTime;
 
-    private UUID venue;
+    private String venueId;  // Venue reference by ID
+
+    private List<TicketDetailDTO> ticketDetails;
+
+    private String contact; // could be phone or email
+
+    private String additionalMessage;
+
+    private String eventPhotoUrl;
+
+    private String coverPhotoUrl;
 
 }

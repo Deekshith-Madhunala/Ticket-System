@@ -7,9 +7,7 @@ import java.util.UUID;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 
-public interface EventRepository extends MongoRepository<Event, UUID> {
-
-    Event findFirstByEventType(EventType eventType);
+public interface EventRepository extends MongoRepository<Event, String> {
 
     Event findFirstByVenue(Venue venue);
 
