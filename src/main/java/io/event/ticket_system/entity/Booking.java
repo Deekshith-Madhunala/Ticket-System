@@ -29,7 +29,7 @@ public class Booking {
     private String id;
 
     @NotNull
-    @Digits(integer = 10, fraction = 2)
+    @Digits(integer = 10, fraction = 4)
     @Field(
             targetType = FieldType.DECIMAL128
     )

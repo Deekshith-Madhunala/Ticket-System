@@ -4,17 +4,21 @@ import io.event.ticket_system.entity.Booking;
 import io.event.ticket_system.entity.Event;
 import io.event.ticket_system.entity.User;
 import io.event.ticket_system.modelDTO.BookingDTO;
+import io.event.ticket_system.modelDTO.EventDTO;
 import io.event.ticket_system.repository.BookingRepository;
 import io.event.ticket_system.repository.EventRepository;
 import io.event.ticket_system.repository.UserRepository;
 import io.event.ticket_system.util.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookingService {
@@ -36,9 +40,18 @@ public class BookingService {
         return modelMapper.map(booking, BookingDTO.class);
     }
 
-    public String create(BookingDTO bookingDTO) {
+    public BookingDTO create(BookingDTO bookingDTO) {
         Booking booking = mapToEntity(bookingDTO);
-        return bookingRepository.save(booking).getId();
+
+        Event event = eventRepository.findById(bookingDTO.getEventId()).get();
+        event.getTicketDetails().getFirst().setTicketQuantity(event.getTicketDetails().get(0).getTicketQuantity() -
+                bookingDTO.getNumberOfTickets());
+        log.info("found booking, updated tickets: ", event.getTicketDetails().getFirst().getTicketQuantity());
+        eventRepository.save(event);
+
+        Booking savedbooking = bookingRepository.save(booking);
+        return modelMapper.map(savedbooking, BookingDTO.class);
+
     }
 
     public void update(String bookingId, BookingDTO bookingDTO) {

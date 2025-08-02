@@ -18,5 +18,8 @@ public class VenueDTO {
 
     private Integer capacity;
 
+    @NotNull
+    private String address;
+
     private String manager; // This is the User ID of the manager
 }

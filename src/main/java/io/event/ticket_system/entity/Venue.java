@@ -5,8 +5,8 @@ import jakarta.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,6 +15,10 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 @Document
 @Getter
 @Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Venue {
 
     @Id
@@ -25,6 +29,9 @@ public class Venue {
     private String venueName;
 
     private Integer capacity;
+
+    @NotNull
+    private String address;
 
     @DocumentReference(lazy = true)
     private User manager;

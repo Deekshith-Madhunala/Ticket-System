@@ -30,9 +30,9 @@ public class BookingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> createBooking(@RequestBody @Valid BookingDTO bookingDTO) {
-        String createdId = bookingService.create(bookingDTO);
-        return new ResponseEntity<>(createdId, HttpStatus.CREATED);
+    public ResponseEntity<BookingDTO> createBooking(@RequestBody @Valid BookingDTO bookingDTO) {
+        BookingDTO createdBooking = bookingService.create(bookingDTO);
+        return new ResponseEntity<>(createdBooking, HttpStatus.CREATED);
     }
 
     @PutMapping("/{bookingId}")

@@ -44,10 +44,16 @@ public class UserService {
         return modelMapper.map(user, UserDTO.class);
     }
 
-    public UserDTO create(final UserDTO userDTO) {
+    public String create(final UserDTO userDTO) {
         User user = modelMapper.map(userDTO, User.class);
-        User saved = userRepository.save(user);
-        return modelMapper.map(saved, UserDTO.class);
+        User savedUser = userRepository.save(user);
+        return JwtUtil.generateToken(
+                savedUser.getId(),
+                savedUser.getUsername(),
+                savedUser.getEmail(),
+                savedUser.getPhoneNumber(),
+                savedUser.getRole()
+        );
     }
 
     public void update(final String userId, final UserDTO userDTO) {
@@ -79,20 +85,20 @@ public class UserService {
         return null;
     }
 
-    public String findByEmailAndPassword(String email, String password) {
-        final User user = userRepository.findByEmail(email); // Find user by email
-        if (user == null) {
-            throw new NotFoundException("User not found");
+        public String findByEmailAndPassword(String email, String password) {
+            final User user = userRepository.findByEmail(email); // Find user by email
+            if (user == null) {
+                throw new NotFoundException("User not found");
+            }
+    //        if (!PasswordEncryptionUtil.matchPassword(password, user.getPassword())) {
+    //            throw new IllegalArgumentException("Invalid password");
+    //        }
+            return JwtUtil.generateToken(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getPhoneNumber(),
+                    user.getRole()
+            );
         }
-//        if (!PasswordEncryptionUtil.matchPassword(password, user.getPassword())) {
-//            throw new IllegalArgumentException("Invalid password");
-//        }
-        return JwtUtil.generateToken(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getPhoneNumber(),
-                user.getRole()
-        );
-    }
 }

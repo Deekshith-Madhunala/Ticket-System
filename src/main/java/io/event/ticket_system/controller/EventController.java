@@ -29,9 +29,9 @@ public class EventController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> createEvent(@RequestBody @Valid EventDTO eventDTO) {
-        String createdEventId = eventService.create(eventDTO);
-        return new ResponseEntity<>(createdEventId, HttpStatus.CREATED);
+    public ResponseEntity<EventDTO> createEvent(@RequestBody @Valid EventDTO eventDTO) {
+        EventDTO createdEvent = eventService.create(eventDTO);
+        return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
     }
 
     @PutMapping("/{eventId}")

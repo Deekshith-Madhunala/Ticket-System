@@ -1,12 +1,15 @@
 package io.event.ticket_system.util;
 
 public enum EventCategory {
-    SPORTS,
+
     MUSIC,
-    FILM,
-    THEATER,
-    COMEDY,
-    FESTIVAL,
-    CONFERENCE,
-    OTHER
+    TECH,
+    SPORTS,
+    BUSINESS,
+    HEALTH,
+    EDUCATION,
+    ART,
+    PARTY,
+    CHARITY,
+    FESTIVAL
 }

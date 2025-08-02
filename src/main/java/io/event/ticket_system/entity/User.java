@@ -30,7 +30,6 @@ public class User {
     private String password;
 
     @NotNull
-    @Email
     @Size(max = 100)
     private String email;
 

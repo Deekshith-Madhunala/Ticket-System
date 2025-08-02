@@ -8,11 +8,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/api/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
@@ -35,9 +38,9 @@ public class UserController {
 
     @PostMapping
     @ApiResponse(responseCode = "201")
-    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid final UserDTO userDTO) {
-        UserDTO createdUserId = userService.create(userDTO);
-        return new ResponseEntity<>(createdUserId, HttpStatus.CREATED);
+    public ResponseEntity<String> createUser(@RequestBody @Valid final UserDTO userDTO) {
+        String createdUserToken = userService.create(userDTO);
+        return new ResponseEntity<>(createdUserToken, HttpStatus.CREATED);
     }
 
     @PutMapping("/{userId}")
@@ -61,6 +64,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestParam(name = "email") final String email,
                                             @RequestParam(name = "password") final String password){
+        log.info("Received login request from user "+ email);
         return ResponseEntity.ok(userService.findByEmailAndPassword(email, password));
     }
 }
