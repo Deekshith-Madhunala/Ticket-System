@@ -39,61 +39,11 @@ public class EventService {
 
     public EventDTO create(EventDTO eventDTO) {
 
-        Venue venue;
-        String venueIdOrString = eventDTO.getVenueId();
-        if (isNewVenue(venueIdOrString)) {
-            String name = extractVenueName(venueIdOrString);
-            int capacity = extractCapacity(venueIdOrString);
-            String address = extractAddress(venueIdOrString);
-
-            venue = Venue.builder()
-                    .venueName(name)
-                    .capacity(capacity)
-                    .address(address)
-                    .build();
-
-
-            venue = venueRepository.save(venue); // persist new venue
-        } else {
-            venue = venueRepository.findById(venueIdOrString)
-                    .orElseThrow(() -> new NotFoundException("Venue not found"));
-        }
-
-//            Venue venue = Venue.builder()
-//                    .venueName(eventDTO.getVenue().getVenueName())
-//                    .capacity(eventDTO.getVenue().getCapacity())
-//                    .address(eventDTO.getVenue().getAddress())
-//                    .build();
-//            venue = venueRepository.save(venue); // persist new venue
-        // Map eventDTO to Event
+//        // Map eventDTO to Event
         Event event = modelMapper.map(eventDTO, Event.class);
-        event.setVenue(venue);
-
         Event savedEvent = eventRepository.save(event);
         return modelMapper.map(savedEvent, EventDTO.class);
 //        return savedEvent.modelmapper;
-    }
-
-    public static boolean isNewVenue(String input) {
-        return input != null && input.startsWith("new-");
-    }
-
-    public static String extractVenueName(String input) {
-        String[] parts = input.split("-");
-        if (parts.length >= 4) return parts[1];
-        throw new IllegalArgumentException("Invalid venue format");
-    }
-
-    public static int extractCapacity(String input) {
-        String[] parts = input.split("-");
-        if (parts.length >= 4) return Integer.parseInt(parts[2]);
-        throw new IllegalArgumentException("Invalid venue format");
-    }
-
-    public static String extractAddress(String input) {
-        String[] parts = input.split("-");
-        if (parts.length >= 4) return parts[3];
-        throw new IllegalArgumentException("Invalid venue format");
     }
 
     public void update(String eventId, EventDTO eventDTO) {

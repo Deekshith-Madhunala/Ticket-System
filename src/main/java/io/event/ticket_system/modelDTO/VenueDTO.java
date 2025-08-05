@@ -21,5 +21,9 @@ public class VenueDTO {
     @NotNull
     private String address;
 
+    private String city;
+
+    private String zipCode;
+
     private String manager; // This is the User ID of the manager
 }

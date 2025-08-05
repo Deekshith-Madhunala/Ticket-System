@@ -33,6 +33,10 @@ public class Venue {
     @NotNull
     private String address;
 
+    private String city;
+
+    private String zipCode;
+
     @DocumentReference(lazy = true)
     private User manager;
 
