@@ -33,6 +33,9 @@ public class    Event {
     private EventCategory eventCategory;
 
     @NotNull
+    private String eventType;
+
+    @NotNull
     private Instant startDateTime;
 
     @NotNull

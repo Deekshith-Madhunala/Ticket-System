@@ -26,6 +26,9 @@ public class EventDTO {
     private EventCategory eventCategory;
 
     @NotNull
+    private String eventType;
+
+    @NotNull
     private Instant startDateTime;
 
     @NotNull
